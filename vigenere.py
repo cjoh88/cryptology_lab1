@@ -43,6 +43,17 @@ def v_ord(c):
 def v_chr(i):
     return ORD[i]
 
+def read_file(filename):
+    f = io.open(filename, "r", encoding="utf8")
+    s = f.read()
+    f.close()
+    return s
+
+def write_file(filename, s):
+    f = io.open(filename, "w", encoding="utf8")
+    f.write(s)
+    f.close()
+
 def error(s, error_code):
     print("Error: " + s)
     sys.exit(error_code)
@@ -51,9 +62,7 @@ def help():
     print("%s -i INPUTFILE -o OUTPUTFILE -k KEY [-e|-d|-b|-t]" % sys.argv[0])
 
 def encrypt(input_file, output_file, key):
-    f = io.open(input_file, "r", encoding="utf8")
-    plaintext = f.read()
-    f.close()
+    plaintext = read_file(input_file)
     if not is_valid(plaintext):
         error("File contains invalid characters. Trim file before encryption", INVALID_CHAR)
     key_length = len(key)
@@ -65,15 +74,11 @@ def encrypt(input_file, output_file, key):
         key_value = v_ord(key[key_index])
         cipher_value = (plaintext_value + key_value) % alphabet_length
         ciphertext += v_chr(cipher_value)
-    f = io.open(output_file, "w", encoding="utf8")
-    f.write(ciphertext)
-    f.close()
+    write_file(output_file, ciphertext)
     print(input_file + " encrypted and stored as " + output_file)
 
 def decrypt(input_file, output_file, key):
-    f = io.open(input_file, "r", encoding="utf8")
-    ciphertext = f.read()
-    f.close()
+    ciphertext = read_file(input_file)
     key_length = len(key)
     plaintext = ""
     alphabet_length = len(ORD)
@@ -83,9 +88,7 @@ def decrypt(input_file, output_file, key):
         key_value = v_ord(key[key_index])
         plain_value = (cipher_value + alphabet_length - key_value) % alphabet_length
         plaintext += v_chr(plain_value)
-    f = io.open(output_file, "w", encoding="utf8")
-    f.write(plaintext)
-    f.close()
+    write_file(output_file, plaintext)
     print(input_file + " decrypted and stored as " + output_file)
 
 def crack():
